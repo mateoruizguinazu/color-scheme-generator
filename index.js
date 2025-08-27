@@ -21,12 +21,12 @@ function pickColor(){ // Esta funcion sirve para hacer el pick de color, y fetch
                     </div>
                 </div>`
 
-            for (color of colors){
+            for (const color of colors) {
                 const hexValue = color.hex.value
                 html += `
-                    <div class="color-result" id="color-${color}-value" style="background: ${hexValue}">
+                    <div class="color-result" style="background: ${hexValue}">
                         <div class="color-hex-box">
-                            <h2 id="color-${color}-hex">${hexValue}</h2>
+                            <h2>${hexValue}</h2>
                         </div>
                     </div>`
             }
