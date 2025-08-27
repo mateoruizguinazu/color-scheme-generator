@@ -1,46 +1,55 @@
-const colorForm = document.getElementById('color-form')
-const colorSpace = document.getElementById('color-space')
+// index.js (versión corregida)
+const colorForm = document.getElementById('color-form');
+const colorSpace = document.getElementById('color-space');
 
-let colors = []
+async function pickColor() {
+  try {
+    const colorFormData = new FormData(colorForm);
+    const colorHex = (colorFormData.get('colorPicker') || '').replace('#', '');
+    const colorMode = colorFormData.get('colorScheme') || 'monochrome';
 
-function pickColor(){ // Esta funcion sirve para hacer el pick de color, y fetch en API otros 4 colores
-    const colorFormData = new FormData(colorForm)
+    // muestra algo si falta hex
+    if (!colorHex) {
+      colorSpace.innerHTML = `<div class="msg">Elige un color primero.</div>`;
+      return;
+    }
 
-    const colorHex = colorFormData.get('colorPicker').replace('#','')
-    const colorMode = colorFormData.get('colorScheme')
+    const res = await fetch(`https://www.thecolorapi.com/scheme?hex=${colorHex}&mode=${colorMode}&count=4`);
+    if (!res.ok) throw new Error(`API error ${res.status}`);
 
-    fetch(`https://www.thecolorapi.com/scheme?hex=${colorHex}&mode=${colorMode}&count=4`)
-        .then(res => res.json())
-        .then(json => {
-            colors = json.colors
+    const json = await res.json();
+    const colors = Array.isArray(json.colors) ? json.colors : [];
 
-            let html = `
-                <div class="color-result" id="color-base-value" style="background: #${colorHex}">
-                    <div class="color-hex-box">
-                        <h2 id="color-base-hex">#${colorHex}</h2>
-                    </div>
-                </div>`
+    // construir HTML
+    let html = `
+      <div class="color-result" id="color-base-value" style="background: #${colorHex}">
+        <div class="color-hex-box">
+          <h2 id="color-base-hex">#${colorHex}</h2>
+        </div>
+      </div>`;
 
-            for (const color of colors) {
-                const hexValue = color.hex.value
-                html += `
-                    <div class="color-result" style="background: ${hexValue}">
-                        <div class="color-hex-box">
-                            <h2>${hexValue}</h2>
-                        </div>
-                    </div>`
-            }
-            colorSpace.innerHTML = html
-    })
+    for (const color of colors) {
+      const hexValue = color?.hex?.value || '#000';
+      const safeId = hexValue.replace('#', '');
+      html += `
+        <div class="color-result" id="color-${safeId}-value" style="background: ${hexValue}">
+          <div class="color-hex-box">
+            <h2 id="color-${safeId}-hex">${hexValue}</h2>
+          </div>
+        </div>`;
+    }
+
+    colorSpace.innerHTML = html;
+  } catch (err) {
+    console.error('pickColor error:', err);
+    colorSpace.innerHTML = `<div class="msg error">Error cargando colores. Reintenta.</div>`;
+  }
 }
 
+colorForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+  pickColor();
+});
 
-colorForm.addEventListener('submit', function(e){ // Esta es la funcion para activar la funcionalidad cuando se submitea el form
-    e.preventDefault()
-    pickColor()
-})
-
-
-
-
-pickColor()
+// llamada inicial (si querés que cargue al abrir)
+pickColor();
