@@ -1,6 +1,8 @@
 const colorForm = document.getElementById('color-form')
 const colorSpace = document.getElementById('color-space')
 
+let colors = []
+
 function pickColor(){ // Esta funcion sirve para hacer el pick de color, y fetch en API otros 4 colores
     const colorFormData = new FormData(colorForm)
 
