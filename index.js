@@ -1,4 +1,5 @@
 const colorForm = document.getElementById('color-form')
+const colorSpace = document.getElementById('color-space')
 
 function pickColor(){ // Esta funcion sirve para hacer el pick de color, y fetch en API otros 4 colores
     const colorFormData = new FormData(colorForm)
@@ -11,15 +12,25 @@ function pickColor(){ // Esta funcion sirve para hacer el pick de color, y fetch
         .then(json => {
             colors = json.colors
 
+            let html = `
+                <div class="color-result" id="color-base-value" style="background: #${colorHex}">
+                    <div class="color-hex-box">
+                        <h2 id="color-base-hex">#${colorHex}</h2>
+                    </div>
+                </div>`
+
             for (color of colors){
                 const hexValue = color.hex.value
-                console.log(`El color es ${hexValue}`)
+                html += `
+                    <div class="color-result" id="color-${color}-value" style="background: ${hexValue}">
+                        <div class="color-hex-box">
+                            <h2 id="color-${color}-hex">${hexValue}</h2>
+                        </div>
+                    </div>`
             }
+            colorSpace.innerHTML = html
     })
 }
-
-
-
 
 
 colorForm.addEventListener('submit', function(e){ // Esta es la funcion para activar la funcionalidad cuando se submitea el form
