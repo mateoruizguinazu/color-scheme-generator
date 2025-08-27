@@ -63,11 +63,30 @@ main {
 }
 
 .color-result {
-    background: red;
     width: 20vw;
     display: flex;
     flex-direction: column;
     justify-content: end;
+}
+
+#color-1-value {
+    background: #F55A5A;
+}
+
+#color-2-value {
+    background: #C01010;
+}
+
+#color-3-value {
+    background: #EE2121;
+}
+
+#color-4-value {
+    background: #F45B5B;
+}
+
+#color-5-value {
+    background: #F99696;
 }
 
 .color-hex-box {
